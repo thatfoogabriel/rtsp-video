@@ -55,7 +55,7 @@ public class Client{
   //Video constants:
   //------------------
   static int MJPEG_TYPE = 26; //RTP payload type for MJPEG video
- 
+
   //--------------------------
   //Constructor
   //--------------------------
@@ -63,12 +63,12 @@ public class Client{
 
     //build GUI
     //--------------------------
- 
+
     //Frame
     f.addWindowListener(new WindowAdapter() {
-       public void windowClosing(WindowEvent e) {
-	 System.exit(0);
-       }
+      public void windowClosing(WindowEvent e) {
+        System.exit(0);
+      }
     });
 
     //Buttons
@@ -149,50 +149,51 @@ public class Client{
   class setupButtonListener implements ActionListener{
     public void actionPerformed(ActionEvent e){
 
-      //System.out.println("Setup Button pressed !");      
+      System.out.println("Setup Button pressed !");      
 
       if (state == INIT) 
 	{
 	  //Init non-blocking RTPsocket that will be used to receive data
-	  try{
+    try{
 	    //construct a new DatagramSocket to receive RTP packets from the server, on port RTP_RCV_PORT
-	    //RTPsocket = ...
-
+      RTPsocket = new DatagramSocket(RTP_RCV_PORT);
 	    //set TimeOut value of the socket to 5msec.
 	    //....
 
-	  }
-	  catch (SocketException se)
-	    {
-	      System.out.println("Socket exception: "+se);
-	      System.exit(0);
-	    }
+    }
+    catch (SocketException se)
+      {
+        System.out.println("Socket exception: "+se);
+        System.exit(0);
+      }
 
 	  //init RTSP sequence number
-	  RTSPSeqNb = 1;
-	 
+    RTSPSeqNb = 1;
+    
 	  //Send SETUP message to the server
-	  send_RTSP_request("SETUP");
+    send_RTSP_request("SETUP");
 
-	  //Wait for the response 
-	  if (parse_server_response() != 200)
-	    System.out.println("Invalid Server Response");
-	  else 
-	    {
+	  //Wait for the response
+    if (parse_server_response() != 200)
+    System.out.println("Invalid Server Response");
+    else 
+    {
 	      //change RTSP state and print new state 
 	      //state = ....
 	      //System.out.println("New RTSP state: ....");
-	    }
+    }
 	}//else if state != INIT then do nothing
     }
-  }
+}
   
+
+
   //Handler for Play button
   //-----------------------
   class playButtonListener implements ActionListener {
     public void actionPerformed(ActionEvent e){
 
-      //System.out.println("Play Button pressed !"); 
+      System.out.println("Play Button pressed !"); 
 
       if (state == READY) 
 	{
@@ -201,13 +202,13 @@ public class Client{
 
 
 	  //Send PLAY message to the server
-	  send_RTSP_request("PLAY");
+    send_RTSP_request("PLAY");
 
 	  //Wait for the response 
-	  if (parse_server_response() != 200)
-		  System.out.println("Invalid Server Response");
-	  else 
-	    {
+    if (parse_server_response() != 200)
+      System.out.println("Invalid Server Response");
+    else 
+      {
 	      //change RTSP state and print out new state
 	      //.....
 	      // System.out.println("New RTSP state: ...")
@@ -217,7 +218,8 @@ public class Client{
 	    }
 	}//else if state != READY then do nothing
     }
-  }
+}
+
 
 
   //Handler for Pause button
@@ -225,7 +227,7 @@ public class Client{
   class pauseButtonListener implements ActionListener {
     public void actionPerformed(ActionEvent e){
 
-      //System.out.println("Pause Button pressed !");   
+      System.out.println("Pause Button pressed !");   
 
       if (state == PLAYING) 
 	{
@@ -233,31 +235,33 @@ public class Client{
 	  //........
 
 	  //Send PAUSE message to the server
-	  send_RTSP_request("PAUSE");
+    send_RTSP_request("PAUSE");
 	
 	  //Wait for the response 
-	 if (parse_server_response() != 200)
-		  System.out.println("Invalid Server Response");
-	  else 
-	    {
+    if (parse_server_response() != 200)
+      System.out.println("Invalid Server Response");
+    else 
+      {
 	      //change RTSP state and print out new state
 	      //........
 	      //System.out.println("New RTSP state: ...");
-	      
+        
 	      //stop the timer
-	      timer.stop();
-	    }
+        timer.stop();
+      }
 	}
       //else if state != PLAYING then do nothing
     }
-  }
+}
+
+
 
   //Handler for Teardown button
   //-----------------------
   class tearButtonListener implements ActionListener {
     public void actionPerformed(ActionEvent e){
 
-      //System.out.println("Teardown Button pressed !");  
+      System.out.println("Teardown Button pressed !");  
 
       //increase RTSP sequence number
       // ..........
@@ -276,13 +280,13 @@ public class Client{
 	  //System.out.println("New RTSP state: ...");
 
 	  //stop the timer
-	  timer.stop();
+    timer.stop();
 
 	  //exit
-	  System.exit(0);
+    System.exit(0);
 	}
     }
-  }
+}
 
 
   //------------------------------------
@@ -298,7 +302,7 @@ public class Client{
       try{
 	//receive the DP from the socket:
 	RTPsocket.receive(rcvdp);
-	  
+  
 	//create an RTPpacket object from the DP
 	RTPpacket rtp_packet = new RTPpacket(rcvdp.getData(), rcvdp.getLength());
 
@@ -328,7 +332,8 @@ public class Client{
 	System.out.println("Exception caught: "+ioe);
       }
     }
-  }
+}
+
 
   //------------------------------------
   //Parse Server Response
@@ -350,16 +355,16 @@ public class Client{
       //if reply code is OK get and print the 2 other lines
       if (reply_code == 200)
 	{
-	  String SeqNumLine = RTSPBufferedReader.readLine();
-	  System.out.println(SeqNumLine);
-	  
-	  String SessionLine = RTSPBufferedReader.readLine();
-	  System.out.println(SessionLine);
+    String SeqNumLine = RTSPBufferedReader.readLine();
+    System.out.println(SeqNumLine);
+
+    String SessionLine = RTSPBufferedReader.readLine();
+    System.out.println(SessionLine);
 	
 	  //if state == INIT gets the Session Id from the SessionLine
-	  tokens = new StringTokenizer(SessionLine);
+    tokens = new StringTokenizer(SessionLine);
 	  tokens.nextToken(); //skip over the Session:
-	  RTSPid = Integer.parseInt(tokens.nextToken());
+    RTSPid = Integer.parseInt(tokens.nextToken());
 	}
     }
     catch(Exception ex)
@@ -369,7 +374,9 @@ public class Client{
       }
     
     return(reply_code);
-  }
+}
+
+
 
   //------------------------------------
   //Send RTSP Request
